@@ -78,7 +78,10 @@ void loop() {
   // io.adafruit.com, and processes any incoming data.
   io.run();
 
-  if (millis() > (lastUpdate + IO_LOOP_DELAY)) {
+  // listen to distance data here (in each loop, if we get a person, add to count)
+  // make newperson variable True so the next "if" gets triggered
+
+  if (millis() > (lastUpdate + IO_LOOP_DELAY) && newperson) {
     // save count to the 'counter' feed on Adafruit IO
     Serial.print("sending -> ");
     Serial.println(count);
@@ -100,5 +103,7 @@ void handleMessage(AdafruitIO_Data *data) {
 
   Serial.print("received <- ");
   Serial.println(data->value());
+
+  // save value into local count variable
 
 }
