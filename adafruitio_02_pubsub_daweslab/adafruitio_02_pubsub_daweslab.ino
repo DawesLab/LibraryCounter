@@ -17,7 +17,14 @@
 // or ethernet clients.
 #include "config.h"
 
+
 /************************ Example Starts Here *******************************/
+
+// AMCD remove with no button
+const int buttonPin = 15;         // the number of the pushbutton pin
+
+// variables will change:
+int buttonState = 0;         // variable for reading the pushbutton status
 
 // this int will hold the current count for our sketch
 int count = 0;
@@ -40,6 +47,8 @@ unsigned long lastUpdate = 0;
 AdafruitIO_Feed *counter = io.feed("library-iot.count");
 
 void setup() {
+
+  pinMode(buttonPin, INPUT); // remove when no button AMCD
 
   // start the serial connection
   Serial.begin(115200);
@@ -81,15 +90,23 @@ void loop() {
 
   // listen to distance data here in each loop, if we get a person
   // make newperson variable True so the next "if" gets triggered
+  // testing with a button
+  buttonState = digitalRead(buttonPin);
+  if (buttonState == HIGH) {
+    newperson = 1;
+  } else {
+    newperson = 0;
+  }
 
   if (millis() > (lastUpdate + IO_LOOP_DELAY) && newperson) {
+
+    // increment the count by 1
+    count++;
+    
     // save count to the 'counter' feed on Adafruit IO
     Serial.print("sending -> ");
     Serial.println(count);
     counter->save(count);
-
-    // increment the count by 1
-    count++;
 
     // after publishing, store the current time
     lastUpdate = millis();
@@ -106,7 +123,7 @@ void handleMessage(AdafruitIO_Data *data) {
   Serial.print("received <- ");
   Serial.println(data->value());
 
-  // save value into local count variable
+  // save IO value into local count variable
   count = data->toInt();
 
 }
