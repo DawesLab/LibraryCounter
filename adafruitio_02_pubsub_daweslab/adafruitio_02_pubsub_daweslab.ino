@@ -21,6 +21,7 @@
 
 // this int will hold the current count for our sketch
 int count = 0;
+bool newperson = 0;
 
 // Track time of last published messages and limit feed->save events to once
 // every IO_LOOP_DELAY milliseconds.
@@ -78,7 +79,7 @@ void loop() {
   // io.adafruit.com, and processes any incoming data.
   io.run();
 
-  // listen to distance data here (in each loop, if we get a person, add to count)
+  // listen to distance data here in each loop, if we get a person
   // make newperson variable True so the next "if" gets triggered
 
   if (millis() > (lastUpdate + IO_LOOP_DELAY) && newperson) {
@@ -92,6 +93,7 @@ void loop() {
 
     // after publishing, store the current time
     lastUpdate = millis();
+    newperson = 0; // be sure to reset to false
   }
 
 }
@@ -105,5 +107,6 @@ void handleMessage(AdafruitIO_Data *data) {
   Serial.println(data->value());
 
   // save value into local count variable
+  count = data->toInt();
 
 }
